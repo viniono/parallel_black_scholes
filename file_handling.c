@@ -1,22 +1,14 @@
-// #include "black.c"
-#include "black.h"
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct {
-  double S; // asset price(stock)
-  double K; // strike price
-  double T; // maturity
-  double r; // risk free
-  double skip;
-  double sigma; // volatility
-  double skip2; // volatility
-} bs_inputs;
-
+#include "file_handling.h"
 #define MAX_LINE_SIZE 1024
 
-bs_inputs *read_input(FILE *file) {
+input_list_t *read_input(FILE *file) {
+    
   int vec_len = 100;
-  bs_inputs *blackScholes_inputs = malloc(vec_len * sizeof(bs_inputs));
+  input_list_t *blackScholes_inputs = malloc(sizeof(input_list_t));
+  blackScholes_inputs->list = malloc(vec_len*sizeof(bs_inputs_t));
+  blackScholes_inputs->size=vec_len;
 
   // Skip the header line
   char header[MAX_LINE_SIZE];
@@ -26,19 +18,22 @@ bs_inputs *read_input(FILE *file) {
   }
   int i = 0;
   while (!feof(file)) {
-    if (i >= vec_len) {
-      vec_len *= 2;
-      blackScholes_inputs =
-          realloc(blackScholes_inputs, sizeof(bs_inputs) * vec_len);
+    if (i >= blackScholes_inputs->size) {
+        blackScholes_inputs->size*=2;
+      blackScholes_inputs->list =
+          realloc(blackScholes_inputs->list, sizeof(bs_inputs_t) * blackScholes_inputs->size);
     }
     // for some reason every other row comes in a weird orther
-    fscanf(file, "%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", &blackScholes_inputs[i].S,
-           &blackScholes_inputs[i].K, &blackScholes_inputs[i].T,
-           &blackScholes_inputs[i].skip, &blackScholes_inputs[i].sigma,
-           &blackScholes_inputs[i].r, &blackScholes_inputs[i].skip2);
+    int count= fscanf(file, "%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", &blackScholes_inputs->list[i].S,
+           &blackScholes_inputs->list[i].K, &blackScholes_inputs->list[i].T,
+           &blackScholes_inputs->list[i].skip, &blackScholes_inputs->list[i].sigma,
+           &blackScholes_inputs->list[i].r, &blackScholes_inputs->list[i].skip2);
+        if(count==EOF||count==0){
+            perror("fscanf");
+        }
     i++;
   }
-  blackScholes_inputs = realloc(blackScholes_inputs, sizeof(bs_inputs) * i);
-
+   blackScholes_inputs->list = realloc(blackScholes_inputs->list, sizeof(bs_inputs_t) *  i);
+   blackScholes_inputs->size=i;
   return blackScholes_inputs;
 }

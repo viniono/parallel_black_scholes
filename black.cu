@@ -1,15 +1,17 @@
-#ifndef BLACK_H
-#define BLACK_H
+#include <stdio.h>
+// #include <math.h>
+#include <cuda_runtime.h>
 
-// //Link for relation of ERF and cdf 
-// //https://www.johndcook.com/erf_and_normal_cdf.pdf
 
-// // Error Function
- __device__ double erf(double x) {
-// 	// constants for error function
-// //source for optimized constants:
-// // https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
-    double a1 =  0.254829592;
+//Link for relation of ERF and cdf 
+//https://www.johndcook.com/erf_and_normal_cdf.pdf
+
+// Error Function
+__host__ __device__ double erf(double x) {
+	// constants for error function
+//source for optimized constants:
+// https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
+	double a1 =  0.254829592;
 	double a2 = -0.284496736;
 	double a3 =  1.421413741;
 	double a4 = -1.453152027;
@@ -30,18 +32,18 @@
 
 
 // Normal CDF using error function
-__device__ double cdf(double x) {
+__host__ __device__ double cdf(double x) {
 	double SQRT_2= 1.41421356237;
     return (erf(x / SQRT_2) + 1.0) / 2.0;
 }
 
 // D1 Black Scholes
-__device__ double D1(double S, double K, double T, double r, double sigma) {
+__host__ __device__ double D1(double S, double K, double T, double r, double sigma) {
 	return (log(S/K) + (r + pow(sigma, 2)/2)) / (sigma * sqrt(T));
 }
 
 // D2 Black Scholes
-__device__ double D2(double d1, double sigma, double T) {
+__host__ __device__ double D2(double d1, double sigma, double T) {
 	return d1 - (sigma * sqrt(T));
 }
 
@@ -60,4 +62,3 @@ __device__ double BS_PUT(double S, double K, double T, double r, double sigma) {
 }
 
 
-#endif
