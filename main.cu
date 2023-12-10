@@ -6,7 +6,7 @@
 #define THREADS_PER_BLOCK 64
 #define MAX_LINE_SIZE 1024
 
-typdef struct {
+typedef struct {
   double call_price;
   double put_price;
 } option_price_t;
