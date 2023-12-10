@@ -64,7 +64,7 @@ int main() {
 
   // GPU
   bs_inputs_t *GPU_blackScholes_inputs;
-  double **GPU_prices;
+  option_price_t *GPU_prices;
 
   if (cudaMalloc(&GPU_blackScholes_inputs, sizeof(bs_inputs_t) * N) !=
       cudaSuccess) {
