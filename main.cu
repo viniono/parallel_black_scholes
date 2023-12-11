@@ -99,9 +99,8 @@ int main() {
     fprintf(stderr, "CUDA Error: %s\n",
             cudaGetErrorString(cudaPeekAtLastError()));
   }
-  size_t end_time = time_ms();
   // Calculate the elapsed time in miliseconds
-  size_t elapsed_time = end_time - start_time;
+  size_t elapsed_time = time_ms() - start_time;
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
                  cudaMemcpyDeviceToHost) != cudaSuccess) {
