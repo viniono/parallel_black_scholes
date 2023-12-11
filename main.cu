@@ -90,7 +90,7 @@ int main() {
   // Calculate the number of blocks to run, rounding up to include all threads
   size_t blocks = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
   // Start timing the performance
-  size_t start_time = time_ms();
+  size_t start_time = time_micros();
   // Run the saxpy kernel
   pricer<<<blocks, THREADS_PER_BLOCK>>>(GPU_blackScholes_inputs, GPU_prices);
 
@@ -100,8 +100,8 @@ int main() {
             cudaGetErrorString(cudaPeekAtLastError()));
   }
   // Calculate the elapsed time in miliseconds
-  size_t elapsed_time = time_ms() - start_time;
-  double seconds = (double)elapsed_time / 1000;
+  size_t elapsed_time = time_micros() - start_time;
+  double seconds = (double)elapsed_time / 1000000;
   double computing_rate = (double)N / seconds;
   printf("Number of options: %d\n", N);
   printf("Total computation time: %lums\n", elapsed_time);

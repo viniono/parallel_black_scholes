@@ -1,6 +1,6 @@
 /*
- * File provided by Charles Curtsinger for the Sudoku Solver lab
- * for the CSC-213 class at Grinnell College for Fall 2023
+ * Code adapted from code provided by Charles Curtsinger for the Sudoku Solver
+ * lab for the CSC-213 class at Grinnell College for Fall 2023
  */
 #if !defined(UTIL_H)
 #define UTIL_H
@@ -10,9 +10,9 @@
 #include <time.h>
 
 /**
- * Get the time in milliseconds since UNIX epoch
+ * Get the time in microseconds since UNIX epoch
  */
-size_t time_ms() {
+size_t time_micros() {
   struct timeval tv;
   if (gettimeofday(&tv, NULL) == -1) {
     perror("gettimeofday");
@@ -20,7 +20,7 @@ size_t time_ms() {
   }
 
   // Convert timeval values to milliseconds
-  return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+  return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
 #endif
