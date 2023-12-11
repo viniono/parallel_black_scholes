@@ -5,5 +5,5 @@ all: main
 clean:
 	rm -rf main *.dSYM *.o
 
-main: main.cu file_handling.h black.h Makefile
+main: main.cu file_handling.h black.h time_util.h Makefile
 	$(CC) $(CFLAGS) -o main main.cu

@@ -1,9 +1,9 @@
 #include "black.h"
 #include "file_handling.h"
+#include "time_util.h"
 #include <cuda_runtime.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <time.h>
 #define THREADS_PER_BLOCK 64
 #define MAX_LINE_SIZE 1024
 
@@ -90,7 +90,7 @@ int main() {
   // Calculate the number of blocks to run, rounding up to include all threads
   size_t blocks = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
   // Start timing the performance
-  clock_t start_time = clock();
+  size_t start_time = time_ms();
   // Run the saxpy kernel
   pricer<<<blocks, THREADS_PER_BLOCK>>>(GPU_blackScholes_inputs, GPU_prices);
 
@@ -99,16 +99,16 @@ int main() {
     fprintf(stderr, "CUDA Error: %s\n",
             cudaGetErrorString(cudaPeekAtLastError()));
   }
-  clock_t end_time = clock();
-  // Calculate the elapsed time in seconds
-  double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+  size_t end_time = time_ms();
+  // Calculate the elapsed time in miliseconds
+  size_t elapsed_time = end_time - start_time;
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
                  cudaMemcpyDeviceToHost) != cudaSuccess) {
     fprintf(stderr, "Failed to copy Y from the GPU\n");
   }
 
-  printf("Calculated call and put prices of %d options in %lf seconds\n", N,
+  printf("Calculated call and put prices of %d options in %lums seconds\n", N,
          elapsed_time);
 
   FILE *output_file = fopen("prices_output.csv", "w");
