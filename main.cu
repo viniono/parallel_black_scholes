@@ -3,6 +3,7 @@
 #include <cuda_runtime.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 #define THREADS_PER_BLOCK 64
 #define MAX_LINE_SIZE 1024
 
@@ -16,16 +17,17 @@ __global__ void pricer(bs_inputs_t *blackScholes_inputs,
   // Which index of the array should this thread use?
   size_t index = blockIdx.x * blockDim.x + threadIdx.x;
 
-  // Compute prices parallell
+  // Unmarshall struct
   double K = blackScholes_inputs[index].K;
   double S = blackScholes_inputs[index].S;
   double r = blackScholes_inputs[index].r;
   double T = blackScholes_inputs[index].T;
   double sigma = blackScholes_inputs[index].sigma;
+  // Compute prices parallell
   double d1 = D1(S, K, T, r, sigma);
   double d2 = D2(d1, sigma, T);
-  prices[index].put_price = K * __expf(-r * T) * cdf(-d2) - S * cdf(-d1);
   prices[index].call_price = S * cdf(d1) - K * __expf(-r * T) * cdf(d2);
+  prices[index].put_price = K * __expf(-r * T) - S + prices[index].call_price;
   // prices[index].put_price =
   //     BS_PUT(blackScholes_inputs[index].S, blackScholes_inputs[index].K,
   //            blackScholes_inputs[index].T, blackScholes_inputs[index].r,
@@ -87,7 +89,8 @@ int main() {
 
   // Calculate the number of blocks to run, rounding up to include all threads
   size_t blocks = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
-
+  // Start timing the performance
+  clock_t start_time = clock();
   // Run the saxpy kernel
   pricer<<<blocks, THREADS_PER_BLOCK>>>(GPU_blackScholes_inputs, GPU_prices);
 
@@ -96,12 +99,17 @@ int main() {
     fprintf(stderr, "CUDA Error: %s\n",
             cudaGetErrorString(cudaPeekAtLastError()));
   }
-
+  clock_t end_time = clock();
+  // Calculate the elapsed time in seconds
+  double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
                  cudaMemcpyDeviceToHost) != cudaSuccess) {
     fprintf(stderr, "Failed to copy Y from the GPU\n");
   }
+
+  printf("Calculated call and put prices of %d options in %lf seconds\n", N,
+         elapsed_time);
 
   FILE *output_file = fopen("prices_output.csv", "w");
 
