@@ -103,9 +103,9 @@ int main() {
   size_t elapsed_time = time_ms() - start_time;
   double seconds = (double)elapsed_time / 1000;
   double computing_rate = (double)N / seconds;
-  printf("Calculated call and put prices of %d options in %lums seconds at a "
-         "rate of %.2f options per second \n",
-         N, elapsed_time, computing_rate);
+  printf("Number of options: %d\n", N);
+  printf("Total computation time: %lums\n", elapsed_time);
+  printf("Computation rate: %.2lf options per second\n", computing_rate);
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
                  cudaMemcpyDeviceToHost) != cudaSuccess) {
