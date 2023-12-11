@@ -101,14 +101,16 @@ int main() {
   }
   // Calculate the elapsed time in miliseconds
   size_t elapsed_time = time_ms() - start_time;
+  double seconds = (double)solving_time / 1000;
+  double computing_rate = (double)solved_count / seconds;
+  printf("Calculated call and put prices of %d options in %lums seconds at a "
+         "rate of %.2f options per second \n",
+         N, elapsed_time, computing_rate);
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
                  cudaMemcpyDeviceToHost) != cudaSuccess) {
     fprintf(stderr, "Failed to copy Y from the GPU\n");
   }
-
-  printf("Calculated call and put prices of %d options in %lums seconds\n", N,
-         elapsed_time);
 
   FILE *output_file = fopen("prices_output.csv", "w");
 
