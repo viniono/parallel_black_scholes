@@ -101,8 +101,8 @@ int main() {
   }
   // Calculate the elapsed time in miliseconds
   size_t elapsed_time = time_ms() - start_time;
-  double seconds = (double)solving_time / 1000;
-  double computing_rate = (double)solved_count / seconds;
+  double seconds = (double)elapsed_time / 1000;
+  double computing_rate = (double)N / seconds;
   printf("Calculated call and put prices of %d options in %lums seconds at a "
          "rate of %.2f options per second \n",
          N, elapsed_time, computing_rate);
