@@ -15,7 +15,7 @@ typedef struct {
 } bs_inputs_t;
 
 typedef struct{
-    int size;
+    long size;
     bs_inputs_t* list;
 }input_list_t;
 
@@ -32,7 +32,7 @@ input_list_t *read_input(FILE *file) {
     perror("Error reading header");
     return NULL;
   }
-  int i = 0;
+  long i = 0;
   while (feof(file)==0) {
     if (i >= blackScholes_inputs->size) {
         blackScholes_inputs->size*=2;

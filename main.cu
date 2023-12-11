@@ -40,9 +40,8 @@ __global__ void pricer(bs_inputs_t *blackScholes_inputs,
 
 int main() {
 
-  int N;
+  long N;
   input_list_t *input_list;
-
   FILE *file = fopen("data/SNP.csv", "r");
 
   if (file == NULL) {
@@ -58,7 +57,6 @@ int main() {
   }
 
   N = input_list->size;
-
   // Allocate arrays for X and Y on the CPU. This memory is only usable on the
   // CPU
   bs_inputs_t *CPU_blackScholes_inputs = input_list->list;
