@@ -104,7 +104,7 @@ int main() {
   double seconds = (double)elapsed_time / 1000000;
   double computing_rate = (double)N / seconds;
   printf("Number of options: %d\n", N);
-  printf("Total computation time: %lums\n", elapsed_time);
+  printf("Total computation time: %lu\u03BCs\n", elapsed_time);
   printf("Computation rate: %.2lf options per second\n", computing_rate);
   // Copy the y array back from the gpu to the cpu
   if (cudaMemcpy(CPU_prices, GPU_prices, sizeof(option_price_t) * N,
