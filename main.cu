@@ -39,15 +39,14 @@ __global__ void pricer(bs_inputs_t *blackScholes_inputs,
 }
 
 int main(int argc, char **argv) {
-  char *filepath;
+  FILE *file;
   if (argc != 2) {
-    filepath = "data/SNP.csv";
+    file = fopen("data/SNP.csv", "r");
   } else {
-    filepath = argv[1];
+    file = fopen(argv[1], "r");
   }
   long N;
   input_list_t *input_list;
-  FILE *file = fopen(filepath, "r");
 
   if (file == NULL) {
     perror("Error opening file");
