@@ -116,7 +116,7 @@ int main() {
     perror("Error opening file");
     return 1;
   }
-  fprintf(output_file, "call_prices,put_prices");
+  fprintf(output_file, "call_prices,put_prices\n");
   // Print the updated y array
   for (int i = 0; i < N; i++) {
     // printf("%d: %f\n",i,CPU_prices[i]);
