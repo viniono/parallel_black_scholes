@@ -38,11 +38,16 @@ __global__ void pricer(bs_inputs_t *blackScholes_inputs,
   //             blackScholes_inputs[index].sigma);
 }
 
-int main() {
-
+int main(int argc, char **argv) {
+  char *filepath;
+  if (argc != 2) {
+    filepath = "data/SNP.csv";
+  } else {
+    filepath = argv[1];
+  }
   long N;
   input_list_t *input_list;
-  FILE *file = fopen("data/SNP.csv", "r");
+  FILE *file = fopen(filepath, "r");
 
   if (file == NULL) {
     perror("Error opening file");
