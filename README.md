@@ -20,11 +20,21 @@ To build the program, run `make`.
 To run the program, run `./main path/to/datafile`
 To see the results of the program, open `prices_output.csv` in a text editor
 
-Example: 
-```
-> ./main data/SNP.csv
+### Example:
+```bash
+onosanta@wang:parallel_black_scholes-main$ make
+nvcc -g  -o main main.cu 
+onosanta@wang:parallel_black_scholes-main$ ./main data/SNP.csv
 Number of options: 57516
 Total computation time: 688μs
-Computation rate: 83598837.21 options per second
-> vim prices_output.csv
+Computation rate: 83,598,837.21 options per second
+onosanta@wang:parallel_black_scholes-main$ ./main data/SNP-medium.csv
+Number of options: 103250
+Total computation time: 1244μs
+Computation rate: 82,998,392.28 options per second
+onosanta@wang:parallel_black_scholes-main$ ./main data/SNP-large.csv
+Number of options: 516250
+Total computation time: 5408μs
+Computation rate: 95,460,428.99 options per second
 ```
+Note that for each run the program should create a file in the current directory named `prices_output.csv`, which contains the output for put and call premiums prices for each of input options inputs as shown in the example above.
