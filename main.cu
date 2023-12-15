@@ -1,6 +1,6 @@
-#include "black.h"
-#include "file_handling.h"
-#include "time_util.h"
+#include "black.cuh"
+#include "file_handling.cuh"
+#include "time_util.cuh"
 #include <cuda_runtime.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -11,47 +11,40 @@ typedef struct {
   double call_price;
   double put_price;
 } option_price_t;
-// __global__ void pricer(float a, float* x, float* y) {
+
 __global__ void pricer(bs_inputs_t *blackScholes_inputs,
-                       option_price_t *prices) {
+                       option_price_t *prices, long N) {
   // Which index of the array should this thread use?
   size_t index = blockIdx.x * blockDim.x + threadIdx.x;
 
+  //checking if out of bounds
+  if(index>=N){
+    return;
+  }
   // Unmarshall struct
   double K = blackScholes_inputs[index].K;
   double S = blackScholes_inputs[index].S;
   double r = blackScholes_inputs[index].r;
   double T = blackScholes_inputs[index].T;
   double sigma = blackScholes_inputs[index].sigma;
-  // Compute prices parallell
+  // Compute d1 and d2 in each thread once only (making sure we have no repeats) since both call and put calculate it
   double d1 = D1(S, K, T, r, sigma);
   double d2 = D2(d1, sigma, T);
   prices[index].call_price = S * cdf(d1) - K * __expf(-r * T) * cdf(d2);
   prices[index].put_price = K * __expf(-r * T) - S + prices[index].call_price;
-  // prices[index].put_price =
-  //     BS_PUT(blackScholes_inputs[index].S, blackScholes_inputs[index].K,
-  //            blackScholes_inputs[index].T, blackScholes_inputs[index].r,
-  //            blackScholes_inputs[index].sigma);
-  // prices[index].put_price =
-  //     BS_CALL(blackScholes_inputs[index].S, blackScholes_inputs[index].K,
-  //             blackScholes_inputs[index].T, blackScholes_inputs[index].r,
-  //             blackScholes_inputs[index].sigma);
 }
 
 int main(int argc, char **argv) {
-  FILE *file;
-  if (argc != 2) {
-    file = fopen("data/SNP.csv", "r");
-  } else {
-    file = fopen(argv[1], "r");
-  }
+  
+  FILE *file = fopen(argv[1], "r");
+  
   long N;
   input_list_t *input_list;
-
   if (file == NULL) {
     perror("Error opening file");
-    return 1;
+    exit(2);
   }
+
   input_list = read_input(file);
   fclose(file);
 
@@ -91,10 +84,13 @@ int main(int argc, char **argv) {
 
   // Calculate the number of blocks to run, rounding up to include all threads
   size_t blocks = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
+  
   // Start timing the performance
   size_t start_time = time_micros();
-  // Run the saxpy kernel
-  pricer<<<blocks, THREADS_PER_BLOCK>>>(GPU_blackScholes_inputs, GPU_prices);
+  
+  
+  // Run the pricer kernel
+  pricer<<<blocks, THREADS_PER_BLOCK>>>(GPU_blackScholes_inputs, GPU_prices, N);
 
   // Wait for the kernel to finish
   if (cudaDeviceSynchronize() != cudaSuccess) {
@@ -120,6 +116,7 @@ int main(int argc, char **argv) {
     perror("Error opening file");
     return 1;
   }
+  //Column names
   fprintf(output_file, "call_prices,put_prices\n");
   // Print the updated y array
   for (int i = 0; i < N; i++) {
@@ -129,7 +126,6 @@ int main(int argc, char **argv) {
   }
 
   fclose(output_file);
-
   free(input_list);
   cudaFree(GPU_prices);
   cudaFree(GPU_blackScholes_inputs);
