@@ -1,8 +1,7 @@
 # Parallalel Option Pricing in the GPU - Final Project CSC 213
 
 ## Students: 
-Diogo Tandeta Tartarotti
-Vinicius Ono Sant'anna
+Diogo Tandeta Tartarotti and Vinicius Ono Sant'anna
 
 ## Source code
 - main.cu: has the GPU kernel and main function.
