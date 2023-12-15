@@ -9,7 +9,7 @@ Diogo Tandeta Tartarotti and Vinicius Ono Sant'anna
 - file_handling.cuh: has the function to process input from .csv files
 - time_util.cuh: has the function to time the kernel
 
-## Data Format
+## Input Data Format
 .csv file with the following comma-separated columns in this order: Stock Price, Strike Price, Maturity, Dividends, Volatility, Risk-free, Call Price.
 Also, the first line of the file must not contain more than 1024 characters.
 
