@@ -23,7 +23,7 @@ To see the results of the program, open `prices_output.csv` in a text editor
 Example: 
 ```
 > ./main data/SNP.csv
-> Number of options: 57516
+Number of options: 57516
 Total computation time: 688μs
 Computation rate: 83598837.21 options per second
 > vim prices_output.csv
