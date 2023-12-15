@@ -10,27 +10,13 @@ __device__ double cdf(double x) {
     return (erf(x / SQRT_2) + 1.0) / 2.0;
 }
 
-// D1 Black Scholes
+// D1 Black Scholes (see slides for reference)
 __device__ double D1(double S, double K, double T, double r, double sigma) {
 	return (log(S/K) + (r + pow(sigma, 2)/2)) / (sigma * sqrt(T));
 }
 
-// D2 Black Scholes
+// D2 Black Scholes (see slides for reference)
 __device__ double D2(double d1, double sigma, double T) {
 	return d1 - (sigma * sqrt(T));
-}
-
-// BLACK CALL
-__device__ double BS_CALL(double S, double K, double T, double r, double sigma) {
-	double d1 = D1(S, K, T, r, sigma);
-	double d2 = D2(d1, sigma, T);
-	return S * cdf(d1) - K * __expf(-r*T) * cdf(d2);
-}
-
-// BLACK PUT
-__device__ double BS_PUT(double S, double K, double T, double r, double sigma) {
-	double d1 = D1(S, K, T, r, sigma);
-	double d2 = D2(d1, sigma, T);
-	return  K * __expf(-r*T) * cdf(-d2) - S * cdf(-d1);
 }
 #endif

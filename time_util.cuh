@@ -1,6 +1,6 @@
 /*
- * Code adapted from code provided by Charles Curtsinger for the Sudoku Solver
- * lab for the CSC-213 class at Grinnell College for Fall 2023
+ * Adapted from code provided by Charles Curtsinger for the Sudoku Solver
+ * lab for CSC-213 Fall 2023 at Grinnell College 
  */
 #if !defined(UTIL_H)
 #define UTIL_H
